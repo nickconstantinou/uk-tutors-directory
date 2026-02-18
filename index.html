@@ -232,6 +232,7 @@
     }
 
     // Contact modal
+    if(typeof posthog!=="undefined"){posthog.capture("contact_modal_opened")}
     function showContactModal(tutorId, tutorName) {
       const modal = document.createElement('div');
       modal.id = 'contact-modal';
@@ -285,6 +286,7 @@
         });
         
         modal.remove();
+        if(typeof posthog!=="undefined"){posthog.capture("lead_submitted",{tutor_id:lead.tutor_id,subject:lead.child_subject})}
         alert('Request sent! The tutor will contact you soon.');
       });
     }
@@ -307,7 +309,15 @@
       });
       
       renderTutors(filtered);
+      if(typeof posthog!=="undefined"){posthog.capture("search_performed",{subject,location,level,resultCount:filtered.length})}
     });
+  </script>
+  <!-- PostHog Analytics -->
+  <script>
+    !function(t,e){var n=document.createElement("script"),s=document.getElementsByTagName("script")[0];
+    n.type="text/javascript",n.async=!0,n.src="//cdn.jsdelivr.net/npm/posthog-js@2/dist/posthog.min.js";
+    s.parentNode.insertBefore(n,s);window.posthog=window.posthog||{};
+    window.posthog.init('phc_IdAZHvksJADiN0p8Cm7H73jh5NT6oQaoYfUgaPPRB28',{api_host:'https://app.posthog.com'});
   </script>
 </body>
 </html>
