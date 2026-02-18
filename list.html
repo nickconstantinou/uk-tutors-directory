@@ -170,21 +170,38 @@
   </footer>
 
   <script>
-    document.getElementById('tutor-form').addEventListener('submit', (e) => {
+    const SUPABASE_URL = 'https://araqigsimkjsmwhnjesv.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyYXFpZ3NpbWtqc213aG5qZXN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzNjQ1NjIsImV4cCI6MjA4Njk0MDU2Mn0.UPwIMO3U6qr6DcPvaLqs5sOGnS9WeftbkJa_JYEA4fw';
+
+    document.getElementById('tutor-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Store in localStorage (MVP)
       const formData = new FormData(e.target);
-      const tutor = Object.fromEntries(formData);
-      tutor.levels = formData.getAll('levels');
-      tutor.id = Date.now();
-      tutor.initials = tutor.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-      tutor.rating = 0;
-      tutor.reviews = 0;
+      const tutor = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        location: formData.get('location'),
+        subjects: formData.get('subjects').split(',').map(s => s.trim()),
+        levels: formData.getAll('levels'),
+        price: parseInt(formData.get('price')),
+        experience: parseInt(formData.get('experience')) || null,
+        bio: formData.get('bio'),
+        rating: 0,
+        reviews: 0,
+        verified: false
+      };
       
-      const tutors = JSON.parse(localStorage.getItem('ukTutors') || '[]');
-      tutors.push(tutor);
-      localStorage.setItem('ukTutors', JSON.stringify(tutors));
+      await fetch(`${SUPABASE_URL}/rest/v1/uk_tutors/tutors`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(tutor)
+      });
       
       // Show success
       document.getElementById('form-card').style.display = 'none';
