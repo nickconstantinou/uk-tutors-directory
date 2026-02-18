@@ -223,7 +223,7 @@
           }
         });
         tutors = await res.json();
-        renderTutors(tutors);
+        fetchTutors();
       } catch (e) {
         console.error('Failed to fetch tutors:', e);
       }
